@@ -10,7 +10,8 @@ import (
 func RunApp() {
 	port := 8000
 
-	http.HandleFunc("/category/", category.CategoryController)
+	http.HandleFunc("/categories/", category.CategoryController)
+	http.HandleFunc("/categories", category.CategoryController)
 	http.HandleFunc("/", AppController)
 
 	fmt.Println("Application running on port", port)

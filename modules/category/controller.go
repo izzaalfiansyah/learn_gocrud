@@ -14,7 +14,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var id int
 
-	idStr := strings.ReplaceAll(r.URL.Path, "/category/", "")
+	idStr := strings.ReplaceAll(strings.ReplaceAll(r.URL.Path, "/categories/", ""), "/categories", "")
 
 	if idStr != "" {
 		idInt, err := strconv.Atoi(idStr)
