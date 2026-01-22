@@ -43,6 +43,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 		category, err := AddCategory(&newCategory)
 		if err != nil {
 			json.NewEncoder(w).Encode(exception.CreateError(err))
+			return
 		}
 
 		json.NewEncoder(w).Encode(map[string]any{
@@ -57,6 +58,37 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 
 		json.NewEncoder(w).Encode(map[string]any{
 			"message":  "Category fetched",
+			"category": &category,
+		})
+		return
+	}
+
+	if r.Method == "PUT" && id != 0 {
+		var updateCategory Category
+		json.NewDecoder(r.Body).Decode(&updateCategory)
+
+		category, err := UpdateCategory(id, &updateCategory)
+		if err != nil {
+			json.NewEncoder(w).Encode(exception.CreateError(err))
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"message":  "Category successfully updated",
+			"category": &category,
+		})
+		return
+	}
+
+	if r.Method == "DELETE" && id != 0 {
+		category, err := DeleteCategory(id)
+		if err != nil {
+			json.NewEncoder(w).Encode(exception.CreateError(err))
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"message":  "Category successfully deleted",
 			"category": &category,
 		})
 	}
