@@ -19,6 +19,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 	if idStr != "" {
 		idInt, err := strconv.Atoi(idStr)
 		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(exception.CreateError(errors.New("Invalid id")))
 			return
 		}
@@ -32,7 +33,6 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 			"message":    "Categories fetched",
 			"categories": &categories,
 		})
-
 		return
 	}
 
@@ -42,6 +42,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 
 		category, err := AddCategory(&newCategory)
 		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(exception.CreateError(err))
 			return
 		}
@@ -56,6 +57,12 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" && id != 0 {
 		category := GetCategoryById(id)
 
+		if category == nil {
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(exception.CreateError(errors.New("Category not found")))
+			return
+		}
+
 		json.NewEncoder(w).Encode(map[string]any{
 			"message":  "Category fetched",
 			"category": &category,
@@ -69,6 +76,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 
 		category, err := UpdateCategory(id, &updateCategory)
 		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(exception.CreateError(err))
 			return
 		}
@@ -83,6 +91,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "DELETE" && id != 0 {
 		category, err := DeleteCategory(id)
 		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(exception.CreateError(err))
 			return
 		}
@@ -91,5 +100,6 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 			"message":  "Category successfully deleted",
 			"category": &category,
 		})
+		return
 	}
 }
