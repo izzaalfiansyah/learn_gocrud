@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"izzaalfiansyah/learn_gocrud/modules/app"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	app.RunApp()
 }
