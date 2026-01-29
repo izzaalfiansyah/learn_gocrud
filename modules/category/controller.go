@@ -7,10 +7,21 @@ import (
 	"strconv"
 	"strings"
 
+	"izzaalfiansyah/learn_gocrud/config"
 	"izzaalfiansyah/learn_gocrud/modules/exception"
 )
 
 func CategoryController(w http.ResponseWriter, r *http.Request) {
+	db, err := config.DB()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(exception.CreateError(err))
+		return
+	}
+
+	repo := NewRepository(db)
+	service := NewService(repo)
+
 	w.Header().Set("Content-Type", "application/json")
 	var id int
 
@@ -20,7 +31,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 		idInt, err := strconv.Atoi(idStr)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(exception.CreateError(errors.New("Invalid id")))
+			json.NewEncoder(w).Encode(exception.CreateError(err))
 			return
 		}
 
@@ -28,7 +39,13 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" && id == 0 {
-		categories := GetCategories()
+		categories, err := service.GetCategories()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(exception.CreateError(err))
+			return
+		}
+
 		json.NewEncoder(w).Encode(map[string]any{
 			"message":    "Categories fetched",
 			"categories": &categories,
@@ -40,7 +57,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 		var newCategory Category
 		json.NewDecoder(r.Body).Decode(&newCategory)
 
-		category, err := AddCategory(&newCategory)
+		category, err := service.AddCategory(&newCategory)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(exception.CreateError(err))
@@ -55,7 +72,12 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" && id != 0 {
-		category := GetCategoryById(id)
+		category, err := service.GetCategoryByID(&id)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(exception.CreateError(err))
+			return
+		}
 
 		if category == nil {
 			w.WriteHeader(http.StatusNotFound)
@@ -74,7 +96,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 		var updateCategory Category
 		json.NewDecoder(r.Body).Decode(&updateCategory)
 
-		category, err := UpdateCategory(id, &updateCategory)
+		category, err := service.UpdateCategory(&id, &updateCategory)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(exception.CreateError(err))
@@ -89,7 +111,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "DELETE" && id != 0 {
-		category, err := DeleteCategory(id)
+		err := service.DeleteCategory(&id)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(exception.CreateError(err))
@@ -97,8 +119,7 @@ func CategoryController(w http.ResponseWriter, r *http.Request) {
 		}
 
 		json.NewEncoder(w).Encode(map[string]any{
-			"message":  "Category successfully deleted",
-			"category": &category,
+			"message": "Category successfully deleted",
 		})
 		return
 	}
