@@ -1,2 +1,6 @@
 learn_gocrud
 docs
+
+.env
+.env.*
+!.env.example

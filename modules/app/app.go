@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"izzaalfiansyah/learn_gocrud/config"
 	"izzaalfiansyah/learn_gocrud/modules/category"
 )
 
 func RunApp() {
-	port := 8000
+	config.LoadConfig()
+	port := config.Env.AppPort
 
 	http.HandleFunc("/categories/", category.CategoryController)
 	http.HandleFunc("/categories", category.CategoryController)
