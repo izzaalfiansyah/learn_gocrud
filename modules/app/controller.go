@@ -11,8 +11,8 @@ func AppController(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]any{
 		"message": "CRUD Category",
 		"endpoints": map[string][]string{
-			"categories":      {"GET", "POST"},
-			"categories/{id}": {"GET", "PUT", "DELETE"},
+			"/categories":      {"GET", "POST"},
+			"/categories/{id}": {"GET", "PUT", "DELETE"},
 		},
 	})
 }
