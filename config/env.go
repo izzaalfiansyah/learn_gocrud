@@ -24,12 +24,14 @@ func LoadConfig() {
 	viper.AutomaticEnv()
 
 	_, err := os.Stat(".env")
-	if err != nil {
+	if err == nil {
+		viper.SetConfigFile(".env")
+		if err := viper.ReadInConfig(); err != nil {
+			log.Println("Failed to read config")
+		}
+	} else {
 		log.Println("No .env file found")
 	}
-
-	viper.SetConfigFile(".env")
-	_ = viper.ReadInConfig()
 
 	port := viper.GetInt("APP_PORT")
 
@@ -37,13 +39,8 @@ func LoadConfig() {
 		port = 8000
 	}
 
-	Env = env{
-		AppName:    viper.GetString("APP_NAME"),
-		AppPort:    port,
-		DBHost:     viper.GetString("DB_HOST"),
-		DBPort:     viper.GetInt("DB_PORT"),
-		DBUsername: viper.GetString("DB_USERNAME"),
-		DBPassword: viper.GetString("DB_PASSWORD"),
-		DBName:     viper.GetString("DB_NAME"),
+	err = viper.Unmarshal(&Env)
+	if err != nil {
+		log.Println("Error load .env config")
 	}
 }
