@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"izzaalfiansyah/learn_gocrud/config"
@@ -12,6 +13,7 @@ import (
 
 func RunApp() {
 	config.LoadConfig()
+	config.InitDB()
 	port := config.Env.AppPort
 
 	http.HandleFunc("/check-health", check_health.CheckHealthController)
@@ -21,7 +23,7 @@ func RunApp() {
 	http.HandleFunc("/products", product.ProductController)
 	http.HandleFunc("/", AppController)
 
-	fmt.Println("Application running on port", port)
+	log.Println("Application running on port", port)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {

@@ -8,7 +8,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func DB() (*sql.DB, error) {
+var DB *sql.DB
+
+func InitDB() (*sql.DB, error) {
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", Env.DBUsername, Env.DBPassword, Env.DBHost, Env.DBPort, Env.DBName)
 
 	db, err := sql.Open("postgres", connectionString)
@@ -22,5 +24,6 @@ func DB() (*sql.DB, error) {
 	}
 
 	log.Println("Database connected")
+	DB = db
 	return db, nil
 }

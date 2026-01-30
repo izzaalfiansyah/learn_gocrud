@@ -31,7 +31,15 @@ func LoadConfig() {
 	viper.SetConfigFile(".env")
 	_ = viper.ReadInConfig()
 
-	err = viper.Unmarshal(&Env)
+	Env = env{
+		AppName:    viper.GetString("APP_NAME"),
+		AppPort:    viper.GetInt("APP_PORT"),
+		DBHost:     viper.GetString("DB_HOST"),
+		DBPort:     viper.GetInt("DB_PORT"),
+		DBUsername: viper.GetString("DB_USERNAME"),
+		DBPassword: viper.GetString("DB_PASSWORD"),
+		DBName:     viper.GetString("DB_NAME"),
+	}
 	if err != nil {
 		panic("Unable to load config")
 	}

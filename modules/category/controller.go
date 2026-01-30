@@ -12,14 +12,7 @@ import (
 )
 
 func CategoryController(w http.ResponseWriter, r *http.Request) {
-	db, err := config.DB()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(exception.CreateError(err))
-		return
-	}
-
-	repo := NewRepository(db)
+	repo := NewRepository(config.DB)
 	service := NewService(repo)
 
 	w.Header().Set("Content-Type", "application/json")
