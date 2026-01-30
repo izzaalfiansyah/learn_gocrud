@@ -31,9 +31,15 @@ func LoadConfig() {
 	viper.SetConfigFile(".env")
 	_ = viper.ReadInConfig()
 
+	port := viper.GetInt("APP_PORT")
+
+	if port == 0 {
+		port = 8000
+	}
+
 	Env = env{
 		AppName:    viper.GetString("APP_NAME"),
-		AppPort:    viper.GetInt("APP_PORT"),
+		AppPort:    port,
 		DBHost:     viper.GetString("DB_HOST"),
 		DBPort:     viper.GetInt("DB_PORT"),
 		DBUsername: viper.GetString("DB_USERNAME"),
