@@ -46,7 +46,4 @@ func LoadConfig() {
 		DBPassword: viper.GetString("DB_PASSWORD"),
 		DBName:     viper.GetString("DB_NAME"),
 	}
-	if err != nil {
-		panic("Unable to load config")
-	}
 }
