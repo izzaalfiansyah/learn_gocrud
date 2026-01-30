@@ -33,11 +33,8 @@ func LoadConfig() {
 		log.Println("No .env file found")
 	}
 
-	port := viper.GetInt("APP_PORT")
-
-	if port == 0 {
-		port = 8000
-	}
+	viper.SetDefault("APP_NAME", "GO CRUD LEARNING")
+	viper.SetDefault("APP_PORT", 8000)
 
 	err = viper.Unmarshal(&Env)
 	if err != nil {
