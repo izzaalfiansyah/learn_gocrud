@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 
 	"github.com/spf13/viper"
@@ -24,16 +25,14 @@ func LoadConfig() {
 
 	_, err := os.Stat(".env")
 	if err != nil {
-		panic("Please create .env file first.")
+		log.Println("No .env file found")
 	}
 
 	viper.SetConfigFile(".env")
-	err = viper.ReadInConfig()
-	if err != nil {
-		panic("Error reading config file")
-	}
+	_ = viper.ReadInConfig()
 
-	if err := viper.Unmarshal(&Env); err != nil {
-		panic("Error unmarshalling config")
+	err = viper.Unmarshal(&Env)
+	if err != nil {
+		panic("Unable to load config")
 	}
 }
