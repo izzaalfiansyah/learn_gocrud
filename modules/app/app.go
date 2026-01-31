@@ -13,7 +13,11 @@ import (
 
 func RunApp() {
 	config.LoadConfig()
-	config.InitDB()
+	_, err := config.InitDB()
+	if err != nil {
+		log.Println("Failed connect to database:", err.Error())
+	}
+
 	port := config.Env.AppPort
 
 	http.HandleFunc("/check-health", check_health.CheckHealthController)
@@ -25,7 +29,7 @@ func RunApp() {
 
 	log.Println("Application running on port", port)
 
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
 		fmt.Println("Error: ", err)
 		return
