@@ -36,8 +36,14 @@ func LoadConfig() {
 	viper.SetDefault("APP_NAME", "GO CRUD LEARNING")
 	viper.SetDefault("APP_PORT", 8000)
 
-	err = viper.Unmarshal(&Env)
-	if err != nil {
-		log.Println("Error load .env config")
+	Env = env{
+		AppName: viper.GetString("APP_NAME"),
+		AppPort: viper.GetInt("APP_PORT"),
+
+		DBHost:     viper.GetString("DB_HOST"),
+		DBPort:     viper.GetInt("DB_PORT"),
+		DBUsername: viper.GetString("DB_USERNAME"),
+		DBPassword: viper.GetString("DB_PASSWORD"),
+		DBName:     viper.GetString("DB_NAME"),
 	}
 }
